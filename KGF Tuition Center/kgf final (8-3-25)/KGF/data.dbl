@@ -1,0 +1,63 @@
+-- Create the Admin table
+CREATE TABLE Admin (
+    Email VARCHAR(50) NOT NULL UNIQUE, -- Admin email, must be unique
+    Password VARCHAR(255) NOT NULL,    -- Admin password (allowing for encrypted passwords)
+    PRIMARY KEY (Email)
+);
+
+-- Insert a row into the Admin table
+INSERT INTO Admin (Email, Password)
+VALUES ('admin@kgf.com', 'admin'); -- Please use hashed passwords in production for security
+
+-- Create the TeacherLogin table with unique teacher ID
+CREATE TABLE TeacherLogin (
+    TeacherID INT AUTO_INCREMENT PRIMARY KEY,  -- Unique ID for each teacher
+    Name VARCHAR(50) NOT NULL,                 -- Teacher's name
+    Email VARCHAR(50) NOT NULL UNIQUE,         -- Teacher's email, must be unique
+    Password VARCHAR(255) NOT NULL             -- Encrypted password (hashed for security)
+);
+
+-- Create the Student table with unique ID, name, email, password, and a reference to TeacherLogin
+CREATE TABLE Student (
+    StudentID INT AUTO_INCREMENT PRIMARY KEY,  -- Unique ID for each student
+    Name VARCHAR(50) NOT NULL,                 -- Student's name
+    Email VARCHAR(50) NOT NULL UNIQUE,         -- Student's email, must be unique
+    Password VARCHAR(255) NOT NULL,            -- Plaintext password (not hashed as per your request)
+    TeacherID INT,                             -- Foreign key linking student to a teacher
+    TotalClasses INT DEFAULT 0,                 -- Total number of classes
+    ClassesAttended INT DEFAULT 0,              -- Number of classes attended by the student
+    FOREIGN KEY (TeacherID) REFERENCES TeacherLogin(TeacherID)  -- Ensuring student belongs to a teacher
+);
+
+-- Create the Student_Notification table with DateSent and TimeSent
+CREATE TABLE Student_Notification (
+    NotificationID INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each notification
+    Subject VARCHAR(255) NOT NULL,                 -- Notification subject (at least 20 characters)
+    Content TEXT NOT NULL,                         -- Notification content (at least 50 characters)
+    DateSent DATE NOT NULL,                        -- Date the notification was sent
+    TimeSent TIME NOT NULL,                        -- Time the notification was sent
+    StudentID INT,                                 -- Foreign key linking the notification to a student
+    TeacherID INT,                                 -- Foreign key linking the notification to a teacher
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),   -- Ensuring notification belongs to a student
+    FOREIGN KEY (TeacherID) REFERENCES TeacherLogin(TeacherID)  -- Ensuring notification belongs to a teacher
+);
+
+
+-- Create the Student_Report table
+CREATE TABLE Student_Report (
+    ReportID INT AUTO_INCREMENT PRIMARY KEY,  -- Unique ID for each report
+    StudentID INT,                            -- Foreign key linking the report to a student
+    TeacherID INT,                            -- Foreign key linking the report to a teacher
+    Test1 INT NULL,                           -- Test 1 score (nullable)
+    Test2 INT NULL,                           -- Test 2 score (nullable)
+    Test3 INT NULL,                           -- Test 3 score (nullable)
+    Test4 INT NULL,                           -- Test 4 score (nullable)
+    Test5 INT NULL,                           -- Test 5 score (nullable)
+    Test6 INT NULL,                           -- Test 6 score (nullable)
+    Test7 INT NULL,                           -- Test 7 score (nullable)
+    Test8 INT NULL,                           -- Test 8 score (nullable)
+    Test9 INT NULL,                           -- Test 9 score (nullable)
+    Test10 INT NULL,                          -- Test 10 score (nullable)
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),  -- Ensuring report belongs to a student
+    FOREIGN KEY (TeacherID) REFERENCES TeacherLogin(TeacherID)  -- Ensuring report belongs to a teacher
+);
